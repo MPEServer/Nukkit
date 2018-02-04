@@ -60,10 +60,7 @@ import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
 import cn.nukkit.permission.Permissible;
-import cn.nukkit.plugin.JavaPluginLoader;
-import cn.nukkit.plugin.Plugin;
-import cn.nukkit.plugin.PluginLoadOrder;
-import cn.nukkit.plugin.PluginManager;
+import cn.nukkit.plugin.*;
 import cn.nukkit.plugin.service.NKServiceManager;
 import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
@@ -233,6 +230,10 @@ public class Server {
 
         if (!new File(dataPath + "players/").exists()) {
             new File(dataPath + "players/").mkdirs();
+        }
+
+        if (!new File(dataPath + "libraries/").exists()) {
+            new File(dataPath + "libraries/").mkdirs();
         }
 
         if (!new File(pluginPath).exists()) {
@@ -414,6 +415,12 @@ public class Server {
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
 
         this.network.registerInterface(new RakNetInterface(this));
+
+        try {
+            LibraryLoader.loadAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         this.pluginManager.loadPlugins(this.pluginPath);
 

@@ -40,6 +40,8 @@ ops.txt
 server.log
 server.properties
 white-list.txt
+libraries
+libraries/*
 worlds
 worlds/*
 plugins

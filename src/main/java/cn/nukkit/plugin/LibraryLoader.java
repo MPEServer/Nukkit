@@ -1,5 +1,7 @@
 package cn.nukkit.plugin;
 
+import cn.nukkit.Server;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -79,6 +81,41 @@ public class LibraryLoader {
         }
 
         LOGGER.info("Load library " + fileName + " done!");
+    }
+
+    private static void loadAny(File file) throws Exception {
+
+        try {
+
+            Server.getInstance().getLogger().info("Loading lib: " + file.getName());
+
+            URLClassLoader loader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            URL url = file.toURI().toURL();
+
+            for (URL l : loader.getURLs()) {
+                if (l.equals(url))
+                    return;
+            }
+
+            Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(loader, url);
+
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+
+    }
+
+	public static void loadAll() throws Exception {
+		File[] libs = BASE_FOLDER.listFiles((dir, name) -> name.endsWith(SUFFIX));
+
+        assert libs != null;
+        for (File file : libs) {
+            if (file.isFile()) {
+                loadAny(file);
+            }
+        }
     }
 
     public static File getBaseFolder() {
